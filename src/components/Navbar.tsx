@@ -99,7 +99,7 @@ export default function Navbar() {
                 <MobileNavLink href="/community" onClick={() => setMobileMenuOpen(false)}>
                     Community
                 </MobileNavLink>
-                <MobileNavLink href="/webhub" onClick={() => setMobileMenuOpen(false)}>
+                <MobileNavLink href="/GamingHub" onClick={() => setMobileMenuOpen(false)}>
                     Web Hub
                 </MobileNavLink>
 
