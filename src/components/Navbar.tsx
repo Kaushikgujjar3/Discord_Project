@@ -64,7 +64,7 @@ export default function Navbar() {
                     <div className="flex items-center gap-4">
                         {/* Login - Desktop */}
                         <Link
-                            href="/login"
+                            href="/signin"
                             className="hidden md:block px-6 py-2 bg-white text-black font-bold rounded-full hover:bg-neutral-200 transition-colors text-sm"
                         >
                             Login
