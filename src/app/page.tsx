@@ -5,8 +5,9 @@ export default function Home() {
   return (
     <div className="flex flex-col items-center overflow-hidden">
 
-      {/* Hero Section */}
-      <section className="
+      {/* HERO SECTION */}
+      <section
+        className="
         relative w-full 
         max-w-7xl 
         mx-auto 
@@ -16,17 +17,20 @@ export default function Home() {
         items-center 
         justify-between 
         gap-14 lg:gap-20
-      ">
+      "
+      >
 
         {/* LEFT SIDE */}
-        <div className="
+        <div
+          className="
           w-full lg:w-1/2 
           space-y-6 
           text-center lg:text-left
-          animate-fadeInUp
-        ">
+        "
+        >
 
-          <div className="
+          <div
+            className="
             inline-block 
             px-4 py-1 
             bg-red-900/30 
@@ -36,13 +40,14 @@ export default function Home() {
             text-xs sm:text-sm 
             font-bold 
             uppercase 
-            tracking-widest 
-            animate-pulse
-          ">
+            tracking-widest
+          "
+          >
             Your friendly neighborhood network
           </div>
 
-          <h1 className="
+          <h1
+            className="
             text-3xl 
             sm:text-4xl 
             md:text-5xl 
@@ -50,33 +55,38 @@ export default function Home() {
             xl:text-7xl 
             spidey-font 
             leading-tight
-          ">
+          "
+          >
             SWING INTO THE{" "}
-            <span className="text-red-600 animate-glow">
+            <span className="text-red-600">
               CONVERSATION
             </span>
           </h1>
 
-          <p className="
+          <p
+            className="
             text-base sm:text-lg lg:text-xl 
             text-gray-400 
             max-w-xl 
             mx-auto lg:mx-0 
             leading-relaxed
-          ">
+          "
+          >
             OpenTL is the ultimate community hub for voice, audio, and chat.
             Connect with your friends in real-time with zero lag and total privacy.
           </p>
 
-          {/* Buttons */}
-          <div className="
+          {/* BUTTONS */}
+          <div
+            className="
             flex flex-col sm:flex-row 
             gap-4 
             pt-4 
             justify-center lg:justify-start
-          ">
+          "
+          >
             <Link
-              href="/dashboard"
+              href="/server/avengers-tower"
               className="
                 w-full sm:w-auto
                 px-6 sm:px-8 
@@ -119,14 +129,16 @@ export default function Home() {
             </button>
           </div>
 
-          {/* Users */}
-          <div className="
+          {/* USERS */}
+          <div
+            className="
             flex flex-col sm:flex-row 
             items-center 
             justify-center lg:justify-start 
             gap-4 sm:gap-6 
             pt-6
-          ">
+          "
+          >
             <div className="flex -space-x-3">
               {[1, 2, 3, 4].map((i) => (
                 <img
@@ -150,20 +162,22 @@ export default function Home() {
           </div>
         </div>
 
-        {/* RIGHT SIDE (Globe) */}
-        <div className="
+        {/* RIGHT SIDE */}
+        <div
+          className="
           w-full lg:w-1/2 
           flex justify-center 
-          relative 
-          animate-fadeIn
-        ">
+          relative
+        "
+        >
 
           <div className="relative z-10 w-full max-w-sm sm:max-w-md lg:max-w-lg">
             <WorldGlobe />
           </div>
 
-          {/* Floating Badge */}
-          <div className="
+          {/* FLOATING BADGE */}
+          <div
+            className="
             absolute
             top-3 right-3
             sm:top-6 sm:right-6
@@ -176,8 +190,8 @@ export default function Home() {
             shadow-xl
             z-20
             backdrop-blur-md
-            animate-bounce
-          ">
+          "
+          >
             <div className="flex items-center gap-2 sm:gap-3">
               <div className="relative flex items-center justify-center">
                 <span className="absolute w-3 h-3 bg-green-500 rounded-full animate-ping opacity-75"></span>
@@ -193,7 +207,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FEATURES */}
+      {/* FEATURES SECTION */}
       <section className="w-full bg-zinc-950 py-16 sm:py-20 lg:py-24 border-y border-zinc-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -204,15 +218,8 @@ export default function Home() {
             <div className="w-20 sm:w-24 h-1 bg-red-600 mx-auto"></div>
           </div>
 
-          <div className="
-            grid 
-            grid-cols-1 
-            sm:grid-cols-2 
-            lg:grid-cols-3 
-            gap-6 sm:gap-8
-          ">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
 
-            {/* Card */}
             {[
               {
                 icon: "🎤",
@@ -222,7 +229,7 @@ export default function Home() {
               {
                 icon: "💬",
                 title: "Real-time Chat",
-                text: "Instant messaging with support for rich media, reactions, and spider-emojis.",
+                text: "Instant messaging with support for rich media and reactions.",
               },
               {
                 icon: "🔒",
@@ -242,11 +249,10 @@ export default function Home() {
                   hover:shadow-xl 
                   hover:shadow-red-600/20 
                   transition-all 
-                  duration-300 
-                  group
+                  duration-300
                 "
               >
-                <div className="w-12 h-12 bg-red-600 rounded-lg mb-6 flex items-center justify-center group-hover:rotate-12 transition-transform">
+                <div className="w-12 h-12 bg-red-600 rounded-lg mb-6 flex items-center justify-center">
                   {item.icon}
                 </div>
 
