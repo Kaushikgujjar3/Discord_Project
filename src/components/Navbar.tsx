@@ -58,6 +58,7 @@ export default function Navbar() {
                         <NavLink href="/dashboard">Dashboard</NavLink>
                         <NavLink href="/community">Community</NavLink>
                         <NavLink href="/webhub">Web Hub</NavLink>
+                        <NavLink href="/streaming-meetings">Streaming/Meetings</NavLink>
                     </div>
 
                     {/* Right Side */}

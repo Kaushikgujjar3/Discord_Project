@@ -15,9 +15,11 @@ interface ChannelSidebarProps {
     channels: Channel[];
     activeChannelId: string;
     onChannelSelect: (id: string) => void;
+    onCreateChannel: () => void;
+    onUserSettings: () => void;
 }
 
-export default function ChannelSidebar({ serverName, channels, activeChannelId, onChannelSelect }: ChannelSidebarProps) {
+export default function ChannelSidebar({ serverName, channels, activeChannelId, onChannelSelect, onCreateChannel, onUserSettings }: ChannelSidebarProps) {
     const textChannels = channels.filter(c => c.type === "text");
     const voiceChannels = channels.filter(c => c.type === "voice");
 
@@ -38,7 +40,12 @@ export default function ChannelSidebar({ serverName, channels, activeChannelId, 
                             <ChevronDown className="w-3 h-3" />
                             <span>Text Channels</span>
                         </div>
-                        <Plus className="w-4 h-4 hidden group-hover:block" />
+                        <button
+                            onClick={(e) => { e.stopPropagation(); onCreateChannel(); }}
+                            className="transition text-zinc-400 hover:text-zinc-200"
+                        >
+                            <Plus className="w-4 h-4 hover:cursor-pointer" />
+                        </button>
                     </div>
                     <div className="space-y-0.5">
                         {textChannels.map(channel => (
@@ -59,7 +66,12 @@ export default function ChannelSidebar({ serverName, channels, activeChannelId, 
                             <ChevronDown className="w-3 h-3" />
                             <span>Voice Channels</span>
                         </div>
-                        <Plus className="w-4 h-4 hidden group-hover:block" />
+                        <button
+                            onClick={(e) => { e.stopPropagation(); onCreateChannel(); }}
+                            className="transition text-zinc-400 hover:text-zinc-200"
+                        >
+                            <Plus className="w-4 h-4 hover:cursor-pointer" />
+                        </button>
                     </div>
                     <div className="space-y-0.5">
                         {voiceChannels.map(channel => (
@@ -89,7 +101,12 @@ export default function ChannelSidebar({ serverName, channels, activeChannelId, 
                 <div className="flex items-center gap-0.5">
                     <button className="p-1.5 hover:bg-zinc-700 rounded transition text-zinc-400 hover:text-zinc-200"><Mic className="w-4.5 h-4.5" /></button>
                     <button className="p-1.5 hover:bg-zinc-700 rounded transition text-zinc-400 hover:text-zinc-200"><Headphones className="w-4.5 h-4.5" /></button>
-                    <button className="p-1.5 hover:bg-zinc-700 rounded transition text-zinc-400 hover:text-zinc-200"><Settings className="w-4.5 h-4.5" /></button>
+                    <button
+                        onClick={onUserSettings}
+                        className="p-1.5 hover:bg-zinc-700 rounded transition text-zinc-400 hover:text-zinc-200"
+                    >
+                        <Settings className="w-4.5 h-4.5" />
+                    </button>
                 </div>
             </div>
         </div>

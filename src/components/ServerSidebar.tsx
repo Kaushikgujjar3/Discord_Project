@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { Plus, Compass } from "lucide-react";
+import { Plus, Compass, Video } from "lucide-react";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 interface Server {
@@ -16,9 +17,10 @@ interface ServerSidebarProps {
     activeServerId: string;
     onServerSelect: (id: string) => void;
     onAddServer: () => void;
+    onMeet: () => void;
 }
 
-export default function ServerSidebar({ servers, activeServerId, onServerSelect }: ServerSidebarProps) {
+export default function ServerSidebar({ servers, activeServerId, onServerSelect, onAddServer, onMeet }: ServerSidebarProps) {
     return (
         <div className="w-[72px] bg-zinc-950 flex flex-col items-center py-3 gap-2 border-r border-zinc-900 h-full overflow-y-auto custom-scrollbar shrink-0">
             {servers.map((server) => {
@@ -41,12 +43,16 @@ export default function ServerSidebar({ servers, activeServerId, onServerSelect 
                         {/* Server Icon */}
                         <div
                             className={cn(
-                                "w-12 h-12 flex items-center justify-center text-white font-bold transition-all duration-300",
+                                "w-12 h-12 flex items-center justify-center text-white font-bold transition-all duration-300 overflow-hidden",
                                 server.color,
                                 isActive ? "rounded-[16px]" : "rounded-[24px] group-hover:rounded-[16px]"
                             )}
                         >
-                            {server.icon}
+                            {server.icon.startsWith("http") || server.icon.startsWith("data:") ? (
+                                <img src={server.icon} alt={server.name} className="w-full h-full object-cover" />
+                            ) : (
+                                server.icon
+                            )}
                         </div>
                     </button>
                 );
@@ -54,13 +60,26 @@ export default function ServerSidebar({ servers, activeServerId, onServerSelect 
 
             <div className="w-8 h-[2px] bg-zinc-800 my-2 shrink-0" />
 
-            <button className="w-12 h-12 bg-zinc-800 rounded-[24px] hover:rounded-[16px] flex items-center justify-center cursor-pointer hover:bg-green-500 hover:text-white transition-all duration-300 group shrink-0">
+            <button
+                onClick={onAddServer}
+                className="w-12 h-12 bg-zinc-800 rounded-[24px] hover:rounded-[16px] flex items-center justify-center cursor-pointer hover:bg-green-500 hover:text-white transition-all duration-300 group shrink-0"
+            >
                 <Plus className="w-6 h-6 text-green-500 group-hover:text-white" />
             </button>
 
-            <button className="w-12 h-12 bg-zinc-800 rounded-[24px] hover:rounded-[16px] flex items-center justify-center cursor-pointer hover:bg-green-500 hover:text-white transition-all duration-300 group shrink-0">
-                <Compass className="w-6 h-6 text-green-500 group-hover:text-white" />
+            <button
+                onClick={onMeet}
+                className="w-12 h-12 bg-zinc-800 rounded-[24px] hover:rounded-[16px] flex items-center justify-center cursor-pointer hover:bg-blue-600 hover:text-white transition-all duration-300 group shrink-0"
+            >
+                <Video className="w-6 h-6 text-blue-500 group-hover:text-white" />
             </button>
+
+            <Link
+                href="/community"
+                className="w-12 h-12 bg-zinc-800 rounded-[24px] hover:rounded-[16px] flex items-center justify-center cursor-pointer hover:bg-green-500 hover:text-white transition-all duration-300 group shrink-0"
+            >
+                <Compass className="w-6 h-6 text-green-500 group-hover:text-white" />
+            </Link>
         </div>
     );
 }

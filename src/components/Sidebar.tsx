@@ -4,6 +4,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useState } from "react";
 import { Plus, Compass, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 import ChannelList from "./ChannelList";
 
 const SERVERS = [
@@ -81,7 +82,7 @@ export default function Sidebar() {
                     </div>
 
                     <div className="w-12 h-12 bg-zinc-800 rounded-full flex items-center justify-center cursor-pointer hover:bg-green-500 hover:text-white transition-colors group shrink-0">
-                        <Compass className="w-5 h-5 text-green-500 group-hover:text-white" />
+                        <Link href='/community'><Compass className="w-5 h-5 text-green-500 group-hover:text-white" /></Link>
                     </div>
                 </div>
 

@@ -86,7 +86,7 @@ export default function Home() {
           "
           >
             <Link
-              href="/server/avengers-tower"
+              href="/dashboard"
               className="
                 w-full sm:w-auto
                 px-6 sm:px-8 
