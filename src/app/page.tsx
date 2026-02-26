@@ -77,7 +77,7 @@ export default function Home() {
         <div className="w-full lg:w-1/2 flex justify-center relative">
 
           <div className="relative w-full max-w-md lg:max-w-lg">
-            <div className="absolute inset-0 bg-red-600/20 blur-3xl rounded-full"></div>
+            <div className="absolute inset-0 bg-red-600/10 blur-3xl rounded-full"></div>
             <WorldGlobe />
           </div>
 

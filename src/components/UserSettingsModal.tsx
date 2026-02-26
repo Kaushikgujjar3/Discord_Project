@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { X, Shield, UserCircle, Smartphone, Lock, Layout, Volume2, Accessibility, Monitor, Globe, LogOut, ChevronLeft, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/context/AuthContext";
 
 interface UserSettingsModalProps {
     isOpen: boolean;
@@ -22,19 +23,24 @@ interface UserData {
 }
 
 export default function UserSettingsModal({ isOpen, onClose }: UserSettingsModalProps) {
+    const { user, logout, updateUser } = useAuth();
     const [activeTab, setActiveTab] = useState<Tab>("My Account");
     const [showMobileContent, setShowMobileContent] = useState(false);
 
-    // Global User State
-    const [userData, setUserData] = useState<UserData>({
-        username: "UserAccount",
-        tag: "0001",
-        email: "user@example.com",
-        displayName: "UserAccount",
-        pronouns: "",
-        bio: "I'm a Spider-Man fan exploring this cool Discord clone! 🕷️",
-        theme: "dark"
-    });
+    // Form states
+    const [displayName, setDisplayName] = useState(user?.displayName || "");
+    const [bio, setBio] = useState(user?.bio || "");
+    const [pronouns, setPronouns] = useState(user?.pronouns || "");
+    const [avatar, setAvatar] = useState(user?.avatar || "");
+
+    useEffect(() => {
+        if (user) {
+            setDisplayName(user.displayName || "");
+            setBio(user.bio || "");
+            setPronouns(user.pronouns || "");
+            setAvatar(user.avatar || "");
+        }
+    }, [user]);
 
     // Close on Escape key
     useEffect(() => {
@@ -60,9 +66,11 @@ export default function UserSettingsModal({ isOpen, onClose }: UserSettingsModal
         setShowMobileContent(true);
     };
 
-    const updateUserData = (newData: Partial<UserData>) => {
-        setUserData(prev => ({ ...prev, ...newData }));
+    const handleSave = async (updates: any) => {
+        await updateUser(updates);
     };
+
+    if (!user) return null;
 
     return (
         <div className="fixed inset-0 z-[300] bg-[#313338] flex overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300">
@@ -99,7 +107,13 @@ export default function UserSettingsModal({ isOpen, onClose }: UserSettingsModal
 
                         <div className="border-t border-zinc-700 mx-2.5 my-2" />
 
-                        <button className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-md text-red-500 hover:bg-zinc-800 transition group">
+                        <button
+                            onClick={() => {
+                                logout();
+                                onClose();
+                            }}
+                            className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-md text-red-500 hover:bg-zinc-800 transition group"
+                        >
                             <span className="text-sm font-medium">Log Out</span>
                             <LogOut className="w-4 h-4" />
                         </button>
@@ -127,9 +141,33 @@ export default function UserSettingsModal({ isOpen, onClose }: UserSettingsModal
 
                 <div className="flex-1 flex justify-start w-full overflow-y-auto custom-scrollbar">
                     <div className="w-full max-w-[740px] px-6 sm:px-10 pt-8 sm:pt-16 pb-20">
-                        {activeTab === "My Account" && <MyAccountView userData={userData} updateUserData={updateUserData} setActiveTab={setActiveTab} />}
-                        {activeTab === "Profiles" && <ProfilesView userData={userData} updateUserData={updateUserData} />}
-                        {activeTab === "Appearance" && <AppearanceView userData={userData} updateUserData={updateUserData} />}
+                        {activeTab === "My Account" && (
+                            <MyAccountView
+                                user={user}
+                                onSave={handleSave}
+                                setActiveTab={setActiveTab}
+                            />
+                        )}
+                        {activeTab === "Profiles" && (
+                            <ProfilesView
+                                user={user}
+                                displayName={displayName}
+                                setDisplayName={setDisplayName}
+                                bio={bio}
+                                setBio={setBio}
+                                pronouns={pronouns}
+                                setPronouns={setPronouns}
+                                avatar={avatar}
+                                setAvatar={setAvatar}
+                                onSave={handleSave}
+                            />
+                        )}
+                        {activeTab === "Appearance" && (
+                            <div className="space-y-4">
+                                <h2 className="text-xl font-bold text-white mb-4">Appearance</h2>
+                                <p className="text-zinc-400">Appearance settings coming soon!</p>
+                            </div>
+                        )}
                         {(activeTab === "Privacy & Safety" || activeTab === "Voice & Video") && (
                             <div className="space-y-4">
                                 <h2 className="text-xl font-bold text-white mb-4">{activeTab}</h2>
@@ -176,17 +214,17 @@ interface ViewProps {
     setActiveTab?: (tab: Tab) => void;
 }
 
-function MyAccountView({ userData, updateUserData, setActiveTab }: ViewProps) {
+function MyAccountView({ user, onSave, setActiveTab }: { user: any, onSave: (u: any) => void, setActiveTab: (t: any) => void }) {
     const [editingField, setEditingField] = useState<string | null>(null);
     const [tempValue, setTempValue] = useState("");
 
     const handleEdit = (field: string, currentVal: string) => {
         setEditingField(field);
-        setTempValue(currentVal);
+        setTempValue(currentVal || "");
     };
 
-    const handleSave = (field: keyof UserData) => {
-        updateUserData({ [field]: tempValue });
+    const handleInternalSave = (field: string) => {
+        onSave({ [field]: tempValue });
         setEditingField(null);
     };
 
@@ -196,13 +234,17 @@ function MyAccountView({ userData, updateUserData, setActiveTab }: ViewProps) {
 
             <div className="bg-[#1e1f22] rounded-lg overflow-hidden shadow-lg border border-zinc-800 lg:max-w-none max-w-full">
                 <div className="h-24 bg-red-600 relative">
-                    <div className="absolute -bottom-8 left-4 w-20 h-20 rounded-full bg-red-600 border-[6px] border-[#1e1f22] flex items-center justify-center text-3xl font-bold text-white shadow-xl">
-                        {userData.displayName[0]?.toUpperCase() || "U"}
+                    <div className="absolute -bottom-8 left-4 w-20 h-20 rounded-full border-[6px] border-[#1e1f22] overflow-hidden shadow-xl">
+                        <img
+                            src={user.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.username}`}
+                            alt={user.username}
+                            className="w-full h-full object-cover"
+                        />
                     </div>
                 </div>
                 <div className="pt-12 pb-6 px-4 sm:px-6 flex flex-col sm:flex-row items-center sm:items-start justify-between gap-4">
                     <div className="text-center sm:text-left">
-                        <h3 className="text-xl font-bold text-white">{userData.username} <span className="text-zinc-400 font-normal">#{userData.tag}</span></h3>
+                        <h3 className="text-xl font-bold text-white">{user.username} <span className="text-zinc-400 font-normal">#{user._id.slice(-4)}</span></h3>
                     </div>
                     <button
                         onClick={() => setActiveTab?.("Profiles")}
@@ -215,41 +257,25 @@ function MyAccountView({ userData, updateUserData, setActiveTab }: ViewProps) {
                 <div className="mx-4 sm:mx-6 mb-6 p-4 bg-[#2b2d31] rounded-lg border border-zinc-800 space-y-4 shadow-inner">
                     <InfoField
                         label="USERNAME"
-                        value={userData.username}
+                        value={user.username}
                         isEditing={editingField === "username"}
                         tempValue={tempValue}
                         setTempValue={setTempValue}
-                        onEdit={() => handleEdit("username", userData.username)}
-                        onSave={() => handleSave("username")}
+                        onEdit={() => handleEdit("username", user.username)}
+                        onSave={() => handleInternalSave("username")}
                         onCancel={() => setEditingField(null)}
                     />
                     <InfoField
                         label="EMAIL"
-                        value={userData.email}
+                        value={user.email}
                         isEditing={editingField === "email"}
                         tempValue={tempValue}
                         setTempValue={setTempValue}
-                        onEdit={() => handleEdit("email", userData.email)}
-                        onSave={() => handleSave("email")}
+                        onEdit={() => handleEdit("email", user.email)}
+                        onSave={() => handleInternalSave("email")}
                         onCancel={() => setEditingField(null)}
                     />
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 group">
-                        <div className="min-w-0">
-                            <p className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider">PHONE NUMBER</p>
-                            <p className="text-sm text-zinc-200 truncate">You haven't added a phone number.</p>
-                        </div>
-                        <button className="w-full sm:w-auto bg-[#4e5058] text-white text-xs font-medium px-4 py-1.5 rounded hover:bg-[#6d6f78] transition opacity-90 hover:opacity-100 text-center">
-                            Add
-                        </button>
-                    </div>
                 </div>
-            </div>
-
-            <div className="space-y-4 pt-6">
-                <h3 className="text-lg font-bold text-white">Password and Authentication</h3>
-                <button className="w-full sm:w-auto bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded hover:bg-blue-700 transition active:scale-95 shadow-lg text-center">
-                    Change Password
-                </button>
             </div>
         </div>
     );
@@ -285,27 +311,101 @@ function InfoField({ label, value, isEditing, tempValue, setTempValue, onEdit, o
     );
 }
 
-function ProfilesView({ userData, updateUserData }: ViewProps) {
+function ProfilesView({
+    user,
+    displayName,
+    setDisplayName,
+    bio,
+    setBio,
+    pronouns,
+    setPronouns,
+    avatar,
+    setAvatar,
+    onSave
+}: {
+    user: any,
+    displayName: string,
+    setDisplayName: (v: string) => void,
+    bio: string,
+    setBio: (v: string) => void,
+    pronouns: string,
+    setPronouns: (v: string) => void,
+    avatar: string,
+    setAvatar: (v: string) => void,
+    onSave: (u: any) => void
+}) {
+    const [saving, setSaving] = useState(false);
+    const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setAvatar(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleInternalSave = async () => {
+        setSaving(true);
+        await onSave({ displayName, bio, pronouns, avatar });
+        setSaving(false);
+    };
+
     return (
         <div className="space-y-6 animate-in fade-in slide-in-from-right-2 duration-300">
             <h2 className="text-xl font-bold text-white mb-2">Profiles</h2>
             <div className="flex flex-col lg:flex-row gap-8 lg:gap-10">
                 <div className="flex-1 space-y-6 order-2 lg:order-1">
+                    {/* Avatar Section */}
+                    <div className="space-y-4">
+                        <label className="text-[12px] font-bold text-zinc-400 uppercase">User Avatar</label>
+                        <div className="flex items-center gap-4">
+                            <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-zinc-700 bg-zinc-800">
+                                <img
+                                    src={avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.username}`}
+                                    alt="Preview"
+                                    className="w-full h-full object-cover"
+                                />
+                            </div>
+                            <input
+                                type="file"
+                                ref={fileInputRef}
+                                onChange={handleFileChange}
+                                accept="image/*"
+                                className="hidden"
+                            />
+                            <button
+                                onClick={() => fileInputRef.current?.click()}
+                                className="bg-red-600 text-white text-xs font-bold px-4 py-2 rounded hover:bg-red-700 transition"
+                            >
+                                Change Avatar
+                            </button>
+                            <button
+                                onClick={() => setAvatar("")}
+                                className="text-zinc-400 text-xs hover:underline"
+                            >
+                                Remove
+                            </button>
+                        </div>
+                    </div>
+
                     <div className="space-y-2">
                         <label className="text-[12px] font-bold text-zinc-400 uppercase">Display Name</label>
                         <input
                             className="w-full bg-[#1e1f22] text-zinc-200 px-3 py-2 rounded outline-none border border-zinc-800 focus:border-blue-500 transition"
-                            value={userData.displayName}
-                            onChange={(e) => updateUserData({ displayName: e.target.value })}
-                            placeholder="UserAccount"
+                            value={displayName}
+                            onChange={(e) => setDisplayName(e.target.value)}
                         />
                     </div>
                     <div className="space-y-2">
                         <label className="text-[12px] font-bold text-zinc-400 uppercase">Pronouns</label>
                         <input
                             className="w-full bg-[#1e1f22] text-zinc-200 px-3 py-2 rounded outline-none border border-zinc-800 focus:border-blue-500 transition"
-                            value={userData.pronouns}
-                            onChange={(e) => updateUserData({ pronouns: e.target.value })}
+                            value={pronouns}
+                            onChange={(e) => setPronouns(e.target.value)}
                             placeholder="Enter pronouns"
                         />
                     </div>
@@ -313,32 +413,38 @@ function ProfilesView({ userData, updateUserData }: ViewProps) {
                         <label className="text-[12px] font-bold text-zinc-400 uppercase">About Me</label>
                         <textarea
                             className="w-full bg-[#1e1f22] text-zinc-200 px-3 py-2 rounded outline-none border border-zinc-800 focus:border-blue-500 transition min-h-[100px] resize-none text-sm"
-                            value={userData.bio}
-                            onChange={(e) => updateUserData({ bio: e.target.value })}
+                            value={bio}
+                            onChange={(e) => setBio(e.target.value)}
                             placeholder="Tell us about yourself..."
                         />
-                        <p className="text-[11px] text-zinc-400 mt-1">You can use markdown and emoji here!</p>
                     </div>
+                    <button
+                        onClick={handleInternalSave}
+                        disabled={saving}
+                        className="bg-blue-600 text-white px-6 py-2 rounded font-medium hover:bg-blue-700 transition disabled:opacity-50"
+                    >
+                        {saving ? "Saving..." : "Save Changes"}
+                    </button>
                 </div>
                 <div className="w-full lg:w-[300px] space-y-4 order-1 lg:order-2">
                     <label className="text-[12px] font-bold text-zinc-400 uppercase block">Preview</label>
                     <div className="bg-[#1e1f22] rounded-lg overflow-hidden border border-zinc-800 shadow-2xl">
                         <div className="h-20 bg-red-600" />
                         <div className="p-4 pt-12 relative">
-                            <div className="absolute -top-10 left-4 w-16 h-16 rounded-full bg-red-600 border-4 border-[#1e1f22] flex items-center justify-center text-2xl font-bold text-white shadow-lg">
-                                {userData.displayName[0]?.toUpperCase() || "U"}
+                            <div className="absolute -top-10 left-4 w-16 h-16 rounded-full border-4 border-[#1e1f22] overflow-hidden bg-[#1e1f22]">
+                                <img
+                                    src={avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.username}`}
+                                    alt={user.username}
+                                    className="w-full h-full object-cover"
+                                />
                             </div>
-                            <h3 className="font-bold text-white text-lg">{userData.displayName}</h3>
-                            <p className="text-zinc-400 text-xs mb-3">{userData.username}#{userData.tag}</p>
-                            {userData.pronouns && <p className="text-zinc-300 text-xs font-medium mb-3">{userData.pronouns}</p>}
+                            <h3 className="font-bold text-white text-lg">{displayName || user.username}</h3>
+                            <p className="text-zinc-400 text-xs mb-3">{user.username}#{user._id.slice(-4)}</p>
+                            {pronouns && <p className="text-zinc-300 text-xs font-medium mb-3">{pronouns}</p>}
                             <div className="h-[1px] bg-zinc-800 my-3" />
                             <div className="space-y-2">
                                 <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-tighter">ABOUT ME</p>
-                                <p className="text-xs text-white leading-relaxed">{userData.bio}</p>
-                            </div>
-                            <div className="mt-4 space-y-1">
-                                <p className="text-[10px] font-bold text-zinc-400 uppercase whitespace-nowrap">DISCORD MEMBER SINCE</p>
-                                <p className="text-xs text-white">Feb 21, 2026</p>
+                                <p className="text-xs text-white leading-relaxed">{bio || "I'm new here!"}</p>
                             </div>
                         </div>
                     </div>

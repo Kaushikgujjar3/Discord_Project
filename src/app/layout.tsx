@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Bangers } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import { AuthProvider } from "@/context/AuthContext";
 
 const inter = Inter({ subsets: ["latin"] });
 const bangers = Bangers({
@@ -25,8 +26,10 @@ export default function RootLayout({
       <body
         className={`${inter.className} ${bangers.variable} web-pattern min-h-screen`}
       >
-        <Navbar />
-        <main className="">{children}</main>
+        <AuthProvider>
+          <Navbar />
+          <main className="">{children}</main>
+        </AuthProvider>
       </body>
     </html>
   );

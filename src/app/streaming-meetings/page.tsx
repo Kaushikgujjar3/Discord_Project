@@ -6,6 +6,7 @@ import MeetingArea from "@/components/MeetingArea";
 import StreamingArea from "@/components/StreamingArea";
 import { Radio, Video, Zap, Globe, Monitor, Users, Shield, ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Footer from "@/components/Footer";
 
 type ViewMode = "selection" | "streaming" | "meeting";
 
@@ -85,6 +86,7 @@ export default function StreamingMeetingsPage() {
                     <MeetingArea onEnd={() => setViewMode("selection")} />
                 )}
             </main>
+            <Footer/>
         </div>
     );
 }

@@ -21,21 +21,31 @@ export default function Footer() {
 
           {/* PRODUCT */}
           <div>
-            <h3 className="text-white font-bold mb-4">Product</h3>
+            <h3 className="text-white font-bold mb-4">Overview</h3>
             <ul className="space-y-3 text-gray-400 text-sm">
+              <li>
+                <Link href="/" className="hover:text-red-500 transition">
+                  Home
+                </Link>
+              </li>
               <li>
                 <Link href="/dashboard" className="hover:text-red-500 transition">
                   Dashboard
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:text-red-500 transition">
-                  Features
+                <Link href="/community" className="hover:text-red-500 transition">
+                  community
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:text-red-500 transition">
-                  Pricing
+                <Link href="/webhub" className="hover:text-red-500 transition">
+                  Webhub
+                </Link>
+              </li>
+              <li>
+                <Link href="streaming-meetings" className="hover:text-red-500 transition">
+                  streaming & meetings
                 </Link>
               </li>
             </ul>
@@ -43,23 +53,9 @@ export default function Footer() {
 
           {/* COMPANY */}
           <div>
-            <h3 className="text-white font-bold mb-4">Company</h3>
-            <ul className="space-y-3 text-gray-400 text-sm">
-              <li>
-                <Link href="#" className="hover:text-red-500 transition">
-                  About
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:text-red-500 transition">
-                  Careers
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:text-red-500 transition">
-                  Contact
-                </Link>
-              </li>
+            <h3 className="text-white font-bold mb-4">Services</h3> 
+            <ul className="space-y-3 text-gray-400 text-sm"> 
+
             </ul>
           </div>
 

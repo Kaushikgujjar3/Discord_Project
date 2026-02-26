@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Users, MessageCircle, Flame } from "lucide-react";
+import Footer from "@/components/Footer";
 
 export default function CommunityPage() {
     const [active, setActive] = useState<number | null>(null);
@@ -118,7 +119,9 @@ export default function CommunityPage() {
                     ))}
                 </div>
             </div>
+            <Footer/>
         </div>
+
     );
 }
 // done

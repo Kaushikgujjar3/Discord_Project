@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 export default function SignupPage() {
   const router = useRouter();
+  const { login } = useAuth();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -24,26 +26,32 @@ export default function SignupPage() {
 
     setLoading(true);
 
-    const res = await fetch("/api/signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password }),
-    });
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: name, email, password }),
+      });
 
-    const data = await res.json();
-    setLoading(false);
+      const data = await res.json();
+      setLoading(false);
 
-    if (!res.ok) {
-      setError(data.message);
-    } else {
-      router.push("/login");
+      if (!res.ok) {
+        setError(data.message);
+      } else {
+        login(data);
+        router.push("/dashboard");
+      }
+    } catch (err) {
+      setLoading(false);
+      setError("Failed to connect to server");
     }
   };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-black px-4 py-12">
 
-     <div className="w-full max-w-md p-8 rounded-2xl
+      <div className="w-full max-w-md p-8 rounded-2xl
                 bg-gradient-to-br from-red-600/20 via-black/40 to-pink-600/20
                 backdrop-blur-xl
                 border border-red-500/30
